@@ -47,6 +47,7 @@ UPDATE_PACKAGE() {
 # UPDATE_PACKAGE "open-app-filter" "destan19/OpenAppFilter" "master" "" "luci-app-appfilter oaf" 这样会把原有的open-app-filter，luci-app-appfilter，oaf相关组件删除，不会出现coremark错误。
 
 # UPDATE_PACKAGE "包名" "项目地址" "项目分支" "pkg/name，可选，pkg为从大杂烩中单独提取包名插件；name为重命名为包名"
+# 修正argon适配openwrt-25.12分支，和你源码版本匹配
 UPDATE_PACKAGE "argon" "sbwml/luci-theme-argon" "openwrt-25.12"
 UPDATE_PACKAGE "aurora" "eamonxg/luci-theme-aurora" "master"
 UPDATE_PACKAGE "aurora-config" "eamonxg/luci-app-aurora-config" "master"
@@ -80,6 +81,20 @@ UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main"
 UPDATE_PACKAGE "timecontrol" "sirpdboy/luci-app-timecontrol" "main"
 UPDATE_PACKAGE "viking" "VIKINGYFY/packages" "main" "" "axonhub gecoosac sing-box luci-app-homeproxy luci-app-timewol luci-app-wolplus luci-app-wolultra"
 UPDATE_PACKAGE "vnt" "lmq8267/luci-app-vnt" "main"
+
+# ========== 第三方扩展插件 ==========
+echo "========================================"
+echo "      EXTRA PACKAGES INSTALL START      "
+echo "========================================"
+# iStore
+UPDATE_PACKAGE "luci-app-store" "linkease/istore" "main" "" "store"
+# OpenAppFilter（锁定 v6.1.8）
+UPDATE_PACKAGE "OpenAppFilter" "destan19/OpenAppFilter" "v6.1.8" "" "luci-app-appfilter oaf open-app-filter"
+# Harbor File
+UPDATE_PACKAGE "harbor-file" "destan19/luci-app-harbor-file" "main" "" "luci-app-harbor-file"
+echo "========================================"
+echo "       EXTRA PACKAGES INSTALL DONE      "
+echo "========================================"
 
 #更新软件包版本
 UPDATE_VERSION() {
@@ -129,3 +144,23 @@ UPDATE_VERSION() {
 if [ -f "$GITHUB_WORKSPACE/Scripts/PRIVATE.sh" ]; then
 	source "$GITHUB_WORKSPACE/Scripts/PRIVATE.sh"
 fi
+
+# 追加之前你需要的：删除强制aurora主题 + argon主题固化脚本
+# 清理源码强制覆盖主题的两行关键代码
+sed -i '/luci.main.theme/d' package/emortal/default-settings/files/zzz-default-settings
+sed -i '/mediaurlbase/d' package/emortal/default-settings/files/zzz-default-settings
+
+# 生成开机自动切换argon主题的uci脚本
+mkdir -p files/etc/uci-defaults
+cat > files/etc/uci-defaults/99-set-theme <<'EOF'
+#!/bin/sh
+uci set luci.main.theme="argon"
+uci set luci.main.mediaurlbase="/luci-static/argon"
+uci commit luci
+rm -rf /tmp/luci-*
+/etc/init.d/uhttpd restart
+exit 0
+EOF
+
+# 赋予所有uci-defaults脚本执行权限
+chmod +x files/etc/uci-defaults/*
