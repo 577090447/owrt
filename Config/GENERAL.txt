@@ -25,6 +25,16 @@ CONFIG_PACKAGE_luci-app-harbor-file=y
 CONFIG_PACKAGE_luci-i18n-harbor-file-zh-cn=y
 
 CONFIG_PACKAGE_luci-app-zerotier=y
+
+
+# ==================== ucode（Argon 依赖） ====================
+CONFIG_PACKAGE_ucode=y
+CONFIG_PACKAGE_ucode-mod-math=y
+CONFIG_PACKAGE_ucode-mod-fs=y
+CONFIG_PACKAGE_ucode-mod-ubus=y
+CONFIG_PACKAGE_ucode-mod-uci=y
+CONFIG_PACKAGE_ucode-mod-struct=y
+
 CONFIG_PACKAGE_luci-theme-argon=y
 
 #删除插件
