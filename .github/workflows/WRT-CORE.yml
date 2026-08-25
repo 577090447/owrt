@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright (C) 2026 VIKINGYFY
 
-#云编译公用核心
+#云编译公用核心（已修改：注入仓库 files/ 并禁止 Settings.sh 覆盖无线配置）
 name: WRT-CORE
 
 on:
@@ -108,6 +108,19 @@ jobs:
             sed -i '/.cn\//d; /tencent/d; /aliyun/d' "$PROJECT_MIRRORS_FILE"
           fi
 
+      # ===== 新增：将仓库根的 files/ 注入到 OpenWrt 源码树（overlay）=====
+      - name: Inject custom files
+        run: |
+          if [ -d "${GITHUB_WORKSPACE}/files" ] && [ -n "$(ls -A ${GITHUB_WORKSPACE}/files)" ]; then
+            echo "Injecting custom files into OpenWrt source..."
+            mkdir -p "${GITHUB_WORKSPACE}/wrt/files"
+            cp -rf "${GITHUB_WORKSPACE}/files/." "${GITHUB_WORKSPACE}/wrt/files/"
+            echo "Custom files injected:"
+            ls -R "${GITHUB_WORKSPACE}/wrt/files"
+          else
+            echo "No custom files found or files/ is empty, skipping."
+          fi
+
       - name: Check Scripts
         run: |
           find ./ -maxdepth 3 -type f -iregex ".*\(txt\|sh\)$" -exec dos2unix {} \; -exec chmod +x {} \;
@@ -175,6 +188,16 @@ jobs:
           $GITHUB_WORKSPACE/Scripts/Settings.sh
 
           make defconfig -j$(nproc) && make clean -j$(nproc)
+
+      # ===== 新增：禁止 Settings.sh 在编译期回写覆盖 WIFI 名称/密码 =====
+      - name: Prevent wireless overwrite by Settings.sh
+        run: |
+          if [ -f "$GITHUB_WORKSPACE/Scripts/Settings.sh" ]; then
+            sed -i '/set-wireless.sh/d' "$GITHUB_WORKSPACE/Scripts/Settings.sh"
+            echo "Disabled automatic wireless SSID/KEY overwrite."
+          else
+            echo "Settings.sh not found, skipping wireless protection."
+          fi
 
       - name: Download Packages
         if: env.WRT_TEST != 'true'
