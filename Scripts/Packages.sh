@@ -26,7 +26,7 @@ UPDATE_PACKAGE() {
 				echo "Delete directory: $DIR"
 			done <<< "$FOUND_DIRS"
 		else
-			echo "Not fonud directory: $NAME"
+			echo "Not found directory: $NAME"
 		fi
 	done
 
@@ -65,7 +65,9 @@ UPDATE_PACKAGE "passwall2" "Openwrt-Passwall/openwrt-passwall2" "main" "pkg"
 
 UPDATE_PACKAGE "luci-app-tailscale" "asvow/luci-app-tailscale" "main"
 
-#UPDATE_PACKAGE "athena-led" "unraveloop/JDC-AX6600-Athena-LED-Controller" "main"
+# 京东云AX6600 Athena LED控制
+UPDATE_PACKAGE "athena-led" "unraveloop/JDC-AX6600-Athena-LED-Controller" "main" "name" "jdc-led ax6600-led athena"
+
 UPDATE_PACKAGE "ddns-go" "sirpdboy/luci-app-ddns-go" "main"
 UPDATE_PACKAGE "diskman" "sbwml/luci-app-diskman" "main"
 UPDATE_PACKAGE "diskmanager" "4IceG/luci-app-mini-diskmanager" "main"
@@ -82,14 +84,17 @@ UPDATE_PACKAGE "timecontrol" "sirpdboy/luci-app-timecontrol" "main"
 UPDATE_PACKAGE "viking" "VIKINGYFY/packages" "main" "" "axonhub gecoosac sing-box luci-app-homeproxy luci-app-timewol luci-app-wolplus luci-app-wolultra"
 UPDATE_PACKAGE "vnt" "lmq8267/luci-app-vnt" "main"
 
+# ===================== tcpdump（抓包插件） =====================
+UPDATE_PACKAGE "luci-app-tcpdump" "KFERMercer/luci-app-tcpdump" "master" "" "tcpdump"
+
 # ========== 第三方扩展插件 ==========
 echo "========================================"
 echo "      EXTRA PACKAGES INSTALL START      "
 echo "========================================"
 # iStore
 UPDATE_PACKAGE "luci-app-store" "linkease/istore" "main" "" "store"
-# OpenAppFilter（锁定 v6.1.8）
-UPDATE_PACKAGE "OpenAppFilter" "destan19/OpenAppFilter" "v6.1.8" "" "luci-app-appfilter oaf open-app-filter"
+# OpenAppFilter 不锁版本，跟随main最新
+UPDATE_PACKAGE "OpenAppFilter" "destan19/OpenAppFilter" "main" "" "luci-app-appfilter oaf open-app-filter"
 # Harbor File
 UPDATE_PACKAGE "harbor-file" "destan19/luci-app-harbor-file" "main" "" "luci-app-harbor-file"
 echo "========================================"
@@ -116,7 +121,7 @@ UPDATE_VERSION() {
 		local OLD_VER=$(grep -Po "PKG_VERSION:=\K.*" "$PKG_FILE")
 		local OLD_URL=$(grep -Po "PKG_SOURCE_URL:=\K.*" "$PKG_FILE")
 		local OLD_FILE=$(grep -Po "PKG_SOURCE:=\K.*" "$PKG_FILE")
-		local OLD_HASH=$(grep -Po "PKG_HASH:=\K.*" "$PKG_FILE")
+		local OLD_HASH=$(grep -Po "PKG_HASH:=\K.*" "$PKG_HASH:=\K.*" "$PKG_FILE")
 
 		local PKG_URL=$([[ "$OLD_URL" == *"releases"* ]] && echo "${OLD_URL%/}/$OLD_FILE" || echo "${OLD_URL%/}")
 
