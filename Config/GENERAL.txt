@@ -1,3 +1,13 @@
+######主题更换########
+# ==================== ucode（Argon 依赖） ====================
+CONFIG_PACKAGE_ucode=y
+CONFIG_PACKAGE_ucode-mod-math=y
+CONFIG_PACKAGE_ucode-mod-fs=y
+CONFIG_PACKAGE_ucode-mod-ubus=y
+CONFIG_PACKAGE_ucode-mod-uci=y
+CONFIG_PACKAGE_ucode-mod-struct=y
+CONFIG_PACKAGE_luci-theme-argon=y
+
 #科学插件调整
 CONFIG_PACKAGE_luci-app-homeproxy=n
 CONFIG_PACKAGE_luci-app-openclash=y
