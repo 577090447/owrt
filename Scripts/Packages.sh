@@ -30,13 +30,11 @@ UPDATE_PACKAGE() {
 
 	# 克隆 GitHub 仓库（支持分支和 tag 自动识别）
 	if git ls-remote --tags "https://github.com/$PKG_REPO.git" | grep -q "refs/tags/$PKG_BRANCH$"; then
-		# ✅ Tag 模式：先 clone 默认分支，再 fetch tag
 		echo "Tag mode detected: $PKG_BRANCH"
 		git clone --depth=1 "https://github.com/$PKG_REPO.git" "$REPO_NAME"
 		git -C "$REPO_NAME" fetch --depth=1 origin "refs/tags/$PKG_BRANCH:refs/tags/$PKG_BRANCH"
 		git -C "$REPO_NAME" checkout -q "refs/tags/$PKG_BRANCH"
 	else
-		# ✅ 分支模式：直接 clone 指定分支
 		echo "Branch mode: $PKG_BRANCH"
 		git clone --depth=1 --single-branch --branch "$PKG_BRANCH" "https://github.com/$PKG_REPO.git" "$REPO_NAME"
 	fi
@@ -59,6 +57,10 @@ UPDATE_PACKAGE "kucat-config" "sirpdboy/luci-app-kucat-config" "master"
 UPDATE_PACKAGE "noobwrt" "nooblk-98/luci-theme-noobwrt" "master"
 UPDATE_PACKAGE "shadcn" "eamonxg/luci-theme-shadcn" "main"
 UPDATE_PACKAGE "theme-fluent" "LazuliKao/luci-theme-fluent" "main"
+
+# 👇 新增主题
+UPDATE_PACKAGE "luci-theme-footstrap" "VizzleTF/luci-theme-footstrap" "main"
+UPDATE_PACKAGE "luci-theme-vantage" "anothaDev/luci-theme-vantage" "main"
 
 # ===================== 网络 / 代理 =====================
 UPDATE_PACKAGE "momo" "nikkinikki-org/OpenWrt-momo" "main"
@@ -88,8 +90,6 @@ UPDATE_PACKAGE "viking" "VIKINGYFY/packages" "main" "" "axonhub gecoosac sing-bo
 UPDATE_PACKAGE "vnt" "lmq8267/luci-app-vnt" "main"
 
 # ===================== LED 控制器 (雅典娜 AX6600) =====================
-# ✅ 新仓库 JDC-AX6600-Athena-LED-Controller
-# ✅ 已移至 WRT-CORE.yml 手动安装（main 分支），此处注释避免重复克隆
 # UPDATE_PACKAGE "athena-led" "577090447/JDC-AX6600-Athena-LED-Controller" "main" "pkg"
 # UPDATE_PACKAGE "luci-app-athena-led" "577090447/JDC-AX6600-Athena-LED-Controller" "main" "pkg"
 
@@ -103,6 +103,10 @@ UPDATE_PACKAGE "harbor-file" "destan19/luci-app-harbor-file" "main" "" "luci-app
 echo "========================================"
 echo "       EXTRA PACKAGES INSTALL DONE      "
 echo "========================================"
+
+# ===================== linkease（易有云） =====================
+UPDATE_PACKAGE "linkease" "linkease/nas-packages" "master" "" "linkease"
+UPDATE_PACKAGE "luci-app-linkease" "linkease/nas-packages-luci" "main" "" "luci-app-linkease luci-i18n-linkease-zh-cn"
 
 # ===================== 版本更新函数 =====================
 UPDATE_VERSION() {
@@ -150,15 +154,15 @@ if [ -f "$GITHUB_WORKSPACE/Scripts/PRIVATE.sh" ]; then
 	source "$GITHUB_WORKSPACE/Scripts/PRIVATE.sh"
 fi
 
-# ===================== 主题固化 =====================
+# ===================== 主题固化（✅ 已切换为 aurora） =====================
 sed -i '/luci.main.theme/d' package/emortal/default-settings/files/zzz-default-settings
 sed -i '/mediaurlbase/d' package/emortal/default-settings/files/zzz-default-settings
 
 mkdir -p files/etc/uci-defaults
 cat > files/etc/uci-defaults/99-set-theme <<'EOF'
 #!/bin/sh
-uci set luci.main.theme="argon"
-uci set luci.main.mediaurlbase="/luci-static/argon"
+uci set luci.main.theme="aurora"
+uci set luci.main.mediaurlbase="/luci-static/aurora"
 uci commit luci
 rm -rf /tmp/luci-*
 /etc/init.d/uhttpd restart
