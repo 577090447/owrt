@@ -87,7 +87,7 @@ UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main"
 UPDATE_PACKAGE "timecontrol" "sirpdboy/luci-app-timecontrol" "main"
 # UPDATE_PACKAGE "viking" "VIKINGYFY/packages" "main" "" "axonhub gecoosac sing-box luci-app-homeproxy luci-app-timewol luci-app-wolplus luci-app-wolultra"
 # UPDATE_PACKAGE "vnt" "lmq8267/luci-app-vnt" "main"
-
+UPDATE_PACKAGE "netwizard" "sirpdboy/luci-app-netwizard" "main"
 # ===================== LED 控制器 (雅典娜 AX6600) =====================
 # UPDATE_PACKAGE "athena-led" "577090447/JDC-AX6600-Athena-LED-Controller" "main" "pkg"
 # UPDATE_PACKAGE "luci-app-athena-led" "577090447/JDC-AX6600-Athena-LED-Controller" "main" "pkg"
